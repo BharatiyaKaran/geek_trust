@@ -29,8 +29,11 @@ class StationService:
             value.passenger_count_map = dict(sorted_passenger_count_map)
 
         # print final output
+        sorted_station_map = sorted(StationService.station_map.items(),
+                                    key=lambda x: x[1], reverse=True)
+        StationService.station_map = dict(sorted_station_map)
         for key, value in StationService.station_map.items():
-            print("TOTAL COLLECTION ", key, value.collection, value.discount)
-            print("PASSENGER TYPE SUMMARY ")
+            print("TOTAL_COLLECTION ", key, value.collection, value.discount)
+            print("PASSENGER_TYPE_SUMMARY ")
             for key, value in value.passenger_count_map.items():
                 print(key, value)
