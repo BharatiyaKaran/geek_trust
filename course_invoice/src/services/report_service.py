@@ -16,16 +16,20 @@ class ReportService:
             self.invoice_repository.invoice.coupon_applied = Coupon.coupons[0]
             discounted_book = heapq.heappop(self.program_repository.program_cost_min_heap)
             self.invoice_repository.invoice.coupon_discount = discounted_book.cost
-        elif Coupon.coupons[1] in self.invoice_repository.invoice.coupons:
+        elif self.invoice_repository.invoice.sub_total >= Coupon.DEAL_G20_threshold and \
+                Coupon.coupons[1] in self.invoice_repository.invoice.coupons:
             self.invoice_repository.invoice.coupon_applied = Coupon.coupons[1]
-            discount = self.invoice_repository.invoice.sub_total * 0.2
+            discount = self.invoice_repository.invoice.sub_total * \
+                       Coupon.coupon_discount['DEAL_G20']
             self.invoice_repository.invoice.coupon_discount = discount
-        elif Coupon.coupons[2] in self.invoice_repository.invoice.coupons:
+        elif len(self.program_repository.program_cost_min_heap) >= Coupon.DEAL_G5_threshold and \
+                Coupon.coupons[2] in self.invoice_repository.invoice.coupons:
             self.invoice_repository.invoice.coupon_applied = Coupon.coupons[2]
-            discount = self.invoice_repository.invoice.sub_total * 0.05
+            discount = self.invoice_repository.invoice.sub_total * \
+                       Coupon.coupon_discount['DEAL_G5']
             self.invoice_repository.invoice.coupon_discount = discount
         else:
-            self.invoice_repository.invoice.coupon_applied = ""
+            self.invoice_repository.invoice.coupon_applied = "NONE"
             self.invoice_repository.invoice.coupon_discount = 0
 
     def calc_pro_discount(self):
@@ -33,12 +37,14 @@ class ReportService:
         # Hack for testing
         # self.invoice_repository.invoice.is_pro_member = True
         if self.invoice_repository.invoice.is_pro_member:
-            for program in self.program_repository.program_cost_min_heap:
+            for index, program in enumerate(self.program_repository.program_cost_min_heap):
                 curr_cost = program.cost
                 curr_name = program.name
                 curr_pro_discount_rate = Fee.pro_discount[curr_name]
                 curr_pro_discount = curr_cost * curr_pro_discount_rate
                 pro_discount += curr_pro_discount
+                new_cost = curr_cost - pro_discount
+                self.program_repository.program_cost_min_heap[index].cost = new_cost
 
         self.invoice_repository.invoice.pro_discount = pro_discount
 
@@ -56,11 +62,11 @@ class ReportService:
 
         self.invoice_repository.invoice.sub_total = self.invoice_repository.invoice.program_cost \
                                                     + self.invoice_repository.invoice.pro_fee \
-                                                    + self.invoice_repository.invoice.enrol_fee \
                                                     - self.invoice_repository.invoice.pro_discount
 
     def calc_total(self):
         self.invoice_repository.invoice.total = self.invoice_repository.invoice.sub_total \
+                                                + self.invoice_repository.invoice.enrol_fee \
                                                 - self.invoice_repository.invoice.coupon_discount
 
     def print_invoice(self):
