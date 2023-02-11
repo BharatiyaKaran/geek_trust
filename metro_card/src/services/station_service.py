@@ -25,10 +25,11 @@ class StationService:
         # sort the passengers in descending order of count
         for key, value in StationService.station_map.items():
             sorted_passenger_count_map = sorted(value.passenger_count_map.items(),
-                                                key=lambda x: x[1], reverse=True)
+                                                key=lambda x: (x[1] * -1, x[0]))
             value.passenger_count_map = dict(sorted_passenger_count_map)
 
         # print final output
+        # sort station by name to always keep "CENTRAL' above 'AIRPORT'
         sorted_station_map = sorted(StationService.station_map.items(),
                                     key=lambda x: x[1], reverse=True)
         StationService.station_map = dict(sorted_station_map)
