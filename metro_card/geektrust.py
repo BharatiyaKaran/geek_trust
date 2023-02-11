@@ -1,11 +1,12 @@
 from sys import argv
-from src.services import CommandService
+from src.command import CommandRegistry
 
 
 def process_commands(lines):
-    command_service = CommandService()
-    command_service.register(lines)
-    command_service.execute()
+    command_registry = CommandRegistry()
+    for line in lines:
+        command_registry.register(line)
+    command_registry.execute()
 
 
 def main():

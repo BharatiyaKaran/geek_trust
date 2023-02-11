@@ -19,7 +19,7 @@ class CommandRegistry:
             command = PrintCommand()
 
         else:
-            #print("Invalid command, skipping ...")
+            # print("Invalid command, skipping ...")
             return
 
         self.commands.append(command)

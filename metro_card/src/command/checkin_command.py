@@ -1,5 +1,5 @@
 from .command import Command
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from src.models import PassengerType
 from src.models import StationName
 from src.services import TripService
@@ -12,5 +12,4 @@ class CheckInCommand(Command):
     station_name: StationName
 
     def execute(self):
-        #print("Checkin command: ", self.metro_card_id, self.passenger_type, self.station_name)
-        TripService.add_trip(self.metro_card_id , self.passenger_type, self.station_name)
+        TripService.add_trip(self.metro_card_id, self.passenger_type, self.station_name)
