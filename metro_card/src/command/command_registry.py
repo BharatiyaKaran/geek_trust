@@ -11,8 +11,6 @@ class CommandRegistry:
 
     def register(self, input: str):
         cmd_str = input.rstrip("\n").split(" ")
-        #print(cmd_str)
-        command = None
         if cmd_str[0] == 'BALANCE':
             command = BalanceCommand(cmd_str[1], cmd_str[2])
         elif cmd_str[0] == 'CHECK_IN':
