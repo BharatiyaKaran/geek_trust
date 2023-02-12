@@ -33,8 +33,14 @@ class RenewalService:
             return total, 1
 
     def process_topup(self):
+        if TopUp.invalid_date:
+            for _ in self.topup_repo.topup:
+                print("ADD_TOPUP_FAILED INVALID DATE")
+            return 0
+
         if TopUp.add_topup_fail:
-            print("ADD_TOPUP_FAILED", TopUp.add_topup_fail_reason)
+            for _ in self.topup_repo.topup:
+                print("ADD_TOPUP_FAILED", TopUp.add_topup_fail_reason)
             return 0
         elif self.topup_repo.topup:
             topup_type = self.topup_repo.topup[0].type
@@ -42,10 +48,14 @@ class RenewalService:
             topup_cost = TopUp.COST[topup_type]
             total_topup_cost = topup_cost * int(topup_count)
             return total_topup_cost
+        else:   # No Topups
+            return 0
 
     def print_renewal_details(self):
-        topup_cost = self.process_topup()
         subscription_cost, err_sub = self.process_subscription()
+        topup_cost = self.process_topup()
         if err_sub != -1:
             total_cost = subscription_cost + topup_cost
             print("RENEWAL_AMOUNT", total_cost)
+        if Subscription.invalid_subscription_date:
+            print("SUBSCRIPTIONS_NOT_FOUND")

@@ -12,6 +12,7 @@ class TopUpService:
         self.subscription_repo = SubscriptionRepository()
 
     def add_topup(self, type, count):
+        self.topup_repo.topup.append(TopUp(type, count, False))
         if len(self.topup_repo.topup) > 0:
             TopUp.add_topup_fail = True
             TopUp.add_topup_fail_reason = 'DUPLICATE_TOPUP'
@@ -19,4 +20,4 @@ class TopUpService:
             TopUp.add_topup_fail = True
             TopUp.add_topup_fail_reason = 'SUBSCRIPTIONS_NOT_FOUND'
 
-        self.topup_repo.topup.append(TopUp(type, count))
+

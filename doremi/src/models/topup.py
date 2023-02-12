@@ -1,4 +1,5 @@
 class TopUp:
+    invalid_date = False
     add_topup_fail = False
     add_topup_fail_reason = ''
 
@@ -7,6 +8,7 @@ class TopUp:
         'TEN_DEVICE': 100
     }
 
-    def __init__(self, type: str, count: int):
+    def __init__(self, type: str, count: int, is_duplicate: bool):
         self.type = type
         self.count = count
+        self.is_duplicate = is_duplicate

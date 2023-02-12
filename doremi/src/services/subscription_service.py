@@ -6,6 +6,7 @@ from singleton_decorator import singleton
 
 from src.models.plan import Plan
 from src.models.subscription import Subscription
+from src.models.topup import TopUp
 from src.repository.subscription_repository import SubscriptionRepository
 
 
@@ -23,6 +24,7 @@ class SubscriptionService:
             #print("Incorrect date format")
             Subscription.invalid_subscription_date = True
             Subscription.add_subscription_failed_reason = 'INVALID_DATE'
+            TopUp.invalid_date = True
 
     def get_end_date(self, start_date, duration):
         end_date = start_date + relativedelta(months=+duration) \
@@ -42,5 +44,5 @@ class SubscriptionService:
         if subscription in self.subscription_repo.subscriptions:
             Subscription.add_subscription_failed = True
             Subscription.add_subscription_failed_reason = 'DUPLICATE_CATEGORY'
-        else:
-            self.subscription_repo.subscriptions.append(subscription)
+
+        self.subscription_repo.subscriptions.append(subscription)
