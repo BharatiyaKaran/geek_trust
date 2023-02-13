@@ -12,12 +12,11 @@ class TopUpService:
         self.subscription_repo = SubscriptionRepository()
 
     def add_topup(self, type, count):
-        self.topup_repo.topup.append(TopUp(type, count, False))
-        if len(self.topup_repo.topup) > 0:
-            TopUp.add_topup_fail = True
-            TopUp.add_topup_fail_reason = 'DUPLICATE_TOPUP'
-        elif len(self.subscription_repo.subscriptions) == 0:
-            TopUp.add_topup_fail = True
-            TopUp.add_topup_fail_reason = 'SUBSCRIPTIONS_NOT_FOUND'
+        cost = TopUp.COST[type] * int(count)
+        curr_topup = TopUp(type, count, cost, False)
+        self.topup_repo.topups.append(curr_topup)
+        if len(self.topup_repo.topups) > 1:
+            TopUp.has_duplicate = True
+            curr_topup.is_duplicate = True
 
 

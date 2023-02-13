@@ -35,14 +35,15 @@ class SubscriptionService:
     def add_subscription(self, category, plan):
         cost = Plan.PLANS[category][plan][0]
         duration = Plan.PLANS[category][plan][1]
-        end_date = None
+        subscription = Subscription(category, plan, cost, duration)
         if Subscription.invalid_subscription_date:
-            pass
+            Subscription.invalid_subscription_date = True
         else:
-            end_date = self.get_end_date(Subscription.start_date, duration)
-        subscription = Subscription(category, plan, cost, duration, end_date)
+            reminder_date = self.get_end_date(Subscription.start_date, duration)
+            subscription.reminder_date = reminder_date
+
         if subscription in self.subscription_repo.subscriptions:
-            Subscription.add_subscription_failed = True
-            Subscription.add_subscription_failed_reason = 'DUPLICATE_CATEGORY'
+            Subscription.has_duplicate = True
+            subscription.is_duplicate = True
 
         self.subscription_repo.subscriptions.append(subscription)

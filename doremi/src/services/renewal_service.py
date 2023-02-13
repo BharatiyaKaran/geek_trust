@@ -11,7 +11,7 @@ class RenewalService:
     def __init__(self):
         self.subscription_repo = SubscriptionRepository()
         self.topup_repo = TopUpRepository()
-
+    """
     def process_subscription(self):
         if len(self.subscription_repo.subscriptions) == 0:
             print("SUBSCRIPTIONS_NOT_FOUND")
@@ -50,12 +50,51 @@ class RenewalService:
             return total_topup_cost
         else:   # No Topups
             return 0
+    """
+
+    def process_invalid_date(self):
+        print("INVALID_DATE")
+        for i in range(len(self.subscription_repo.subscriptions)):
+            print("ADD_SUBSCRIPTION_FAILED INVALID_DATE")
+
+        for i in range(len(self.topup_repo.topups)):
+            print("ADD_TOPUP_FAILED INVALID_DATE")
+        print("SUBSCRIPTIONS_NOT_FOUND")
+
+    def process_duplicate_subscriptions(self):
+        for subscription in self.subscription_repo.subscriptions:
+            if subscription.is_duplicate:
+                print("ADD_SUBSCRIPTION_FAILED DUPLICATE_CATEGORY")
+
+    def process_duplicate_topups(self):
+        for topup in self.topup_repo.topups:
+            if topup.is_duplicate:
+                print("ADD_TOPUP_FAILED DUPLICATE_TOPUP")
+
+    def process_subscriptions(self):
+        s_cost = 0
+        for subscription in self.subscription_repo.subscriptions:
+            if not subscription.is_duplicate:
+                s_cost += subscription.cost
+                print("RENEWAL_REMINDER", subscription.category, subscription.reminder_date)
+
+        return s_cost
+
+    def process_topups(self):
+        t_cost = 0
+        for topup in self.topup_repo.topups:
+            if not topup.is_duplicate:
+                t_cost += topup.cost
+
+        return t_cost
 
     def print_renewal_details(self):
-        subscription_cost, err_sub = self.process_subscription()
-        topup_cost = self.process_topup()
-        if err_sub != -1:
-            total_cost = subscription_cost + topup_cost
-            print("RENEWAL_AMOUNT", total_cost)
         if Subscription.invalid_subscription_date:
-            print("SUBSCRIPTIONS_NOT_FOUND")
+            self.process_invalid_date()
+        else:
+            self.process_duplicate_subscriptions()
+            self.process_duplicate_topups()
+            s_cost = self.process_subscriptions()
+            t_cost = self.process_topups()
+            total_cost = s_cost + t_cost
+            print("RENEWAL_AMOUNT", total_cost)
